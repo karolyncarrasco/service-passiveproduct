@@ -4,6 +4,7 @@ import com.bootcamp.passiveProduct.common.ErrorMessage;
 import com.bootcamp.passiveProduct.common.FunctionalException;
 import com.bootcamp.passiveProduct.domain.BankAccount;
 import com.bootcamp.passiveProduct.domain.Client;
+import com.bootcamp.passiveProduct.domain.CreditCard;
 import com.bootcamp.passiveProduct.repository.BankAccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.ReactiveTransaction;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -34,9 +36,18 @@ public class BankAccountService {
 
     private final WebClient webClient = WebClient.builder().baseUrl("http://localhost:8081/v1/client").defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
 
+    private final WebClient activeService = WebClient.builder().baseUrl("http://localhost:8082/v1/creditcard").defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
+
     public Mono<Client> getClientByIdentityNumber(String identityNumber) {
         return this.webClient.get().uri("/findByIdentityNumber/{identityNumber}", identityNumber)
                 .retrieve().bodyToMono(Client.class);
+    }
+
+    public Mono<CreditCard> getCreditCardByClient(String identityNumber) {
+        return this.activeService.get().uri("/findByClient/{identityNumber}", identityNumber)
+                .retrieve().bodyToMono(CreditCard.class)
+                .onErrorResume(WebClientResponseException.class,
+                        ex -> ex.getRawStatusCode() == 404 ? Mono.empty() : Mono.error(ex));
     }
 
     public Flux<BankAccount> findAll(){
@@ -61,7 +72,16 @@ public class BankAccountService {
                                 if (x.getClientType().getDescription().toUpperCase().equals("PERSONAL")) {
                                     return bankAccountRepository.findTop1ByOwnersAndAccountType(bankAccount.getOwners(), "AHO")
                                             .flatMap(y -> Mono.error(new FunctionalException(ErrorMessage.PERSONAL_AHORRO_RESTRICTION.getValue())))
-                                            .switchIfEmpty(Mono.defer(()->bankAccountRepository.save(bankAccount)));
+                                            .switchIfEmpty(Mono.defer(()-> {
+                                                        if(bankAccount.getProfile().toUpperCase().equals("VIP")){
+                                                            return getCreditCardByClient(x.getIdentityNumber())
+                                                                    .flatMap(z-> bankAccountRepository.save(bankAccount))
+                                                                    .switchIfEmpty(Mono.error(new FunctionalException(ErrorMessage.VIP_RESTRICTION.getValue())));
+                                                        }
+                                                        else
+                                                            return bankAccountRepository.save(bankAccount);
+                                                    })
+                                                );
                                 }
                                 else
                                 {
@@ -81,7 +101,14 @@ public class BankAccountService {
                                 }
                                 else
                                 {
-                                    return bankAccountRepository.save(bankAccount);
+                                    if(bankAccount.getProfile().toUpperCase().equals("PYME")){
+                                        bankAccount.setMaintenanceCommision(0d);
+                                        return getCreditCardByClient(x.getIdentityNumber())
+                                                .flatMap(z-> bankAccountRepository.save(bankAccount))
+                                                .switchIfEmpty(Mono.error(new FunctionalException(ErrorMessage.PYME_RESTRICTION.getValue())));
+                                    }
+                                    else
+                                        return bankAccountRepository.save(bankAccount);
                                 }
                             }
                     )

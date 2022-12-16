@@ -58,4 +58,10 @@ public class BankAccountModel {
     private List<String> signatories;
 
     private LocalDate openingDate;
+
+    private String profile;
+
+    private Integer maxTransaction;
+
+    private double comissionTransaction;
 }

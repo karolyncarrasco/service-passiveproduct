@@ -7,55 +7,47 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @Builder
 @ToString
-@EqualsAndHashCode(of = {"accountId"})
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(value = "account")
-public class BankAccount {
+public class CreditCard {
+
     @Id
     private String id;
 
     @NotNull
-    private String accountType; /*AHO, CTE, FIJ*/
+    private Client client;
 
     @NotNull
     @Indexed(unique = true)
-    private String accountNumber;
+    private String cardNumber;
 
     @NotNull
-    @Indexed(unique = true)
-    private String cci;
+    private LocalDate issueDate;
 
     @NotNull
-    private Double balance;
+    private LocalDate expiryDate;
 
     @NotNull
-    private Double openAmmount;
+    private Boolean status;
+
+    @NotNull
+    private Integer payDate;
+
+    @NotNull
+    private Integer billingDate;
+
+    @NotNull
+    private Double creditLimit;
 
     @NotNull
     private String currency;
 
     @NotNull
-    private Double maintenanceCommision;
-
-    @NotNull
-    private Integer movementQuantity;
-
-    @NotNull
-    private Integer movementFrecuency;
-
-    @NotNull
-    private List<String> owners;
-
-    private List<String> signatories;
-
-    @NotNull
-    private LocalDate openingDate;
+    private Double interestRate;
 
     @NotNull
     private LocalDate creationDate;
@@ -68,10 +60,4 @@ public class BankAccount {
 
     @NotNull
     private String modifiedUser;
-
-    private String profile;
-
-    private Integer maxTransaction;
-
-    private double comissionTransaction;
 }

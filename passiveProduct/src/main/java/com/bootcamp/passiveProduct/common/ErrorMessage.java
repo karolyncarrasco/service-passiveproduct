@@ -9,7 +9,9 @@ public enum ErrorMessage {
     ACCOUNTTYPE_NOT_FOUND("El tipo de cuenta indicado no existe"),
     OPENAMOUNT_RESTRICTION("El tipo de cuenta indicado no existe"),
     ACCOUNT_NOT_FOUND("La cuenta no existe"),
-    LIMIT_ACCOUNT("Saldo insuficiente");
+    LIMIT_ACCOUNT("Saldo insuficiente"),
+    VIP_RESTRICTION("Para crear una cuenta VIP debe tener una TC"),
+    PYME_RESTRICTION("Para crear una cuenta PYME debe tener una TC");
 
     private String value;
     ErrorMessage(String value){

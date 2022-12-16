@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 @Data
 @Builder
+@EqualsAndHashCode(of = {"identityNumber"})
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
