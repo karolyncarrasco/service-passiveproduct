@@ -31,4 +31,6 @@ public class AccountMovementModel {
     @NotBlank(message = "Debe indicar el tipo de movimiento D: Débito, A: Abono")
     public String type;
 
+    public double comission;
+
 }

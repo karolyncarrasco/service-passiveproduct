@@ -29,6 +29,7 @@ public class AccountMovement {
     @NotNull
     public String type; //A: abono, D: Débito
 
-
+    @NotNull
+    public double comission;
 
 }
