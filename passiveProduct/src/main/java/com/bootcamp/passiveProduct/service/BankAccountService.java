@@ -6,6 +6,7 @@ import com.bootcamp.passiveProduct.domain.BankAccount;
 import com.bootcamp.passiveProduct.domain.Client;
 import com.bootcamp.passiveProduct.domain.CreditCard;
 import com.bootcamp.passiveProduct.repository.BankAccountRepository;
+import com.bootcamp.passiveProduct.web.mapper.BankAccountMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,8 @@ public class BankAccountService {
     @Autowired
     private BankAccountRepository bankAccountRepository;
 
+    private BankAccountMapper bankAccountMapper;
+
     private final WebClient webClient = WebClient.builder().baseUrl("http://localhost:8081/v1/client").defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
 
     private final WebClient activeService = WebClient.builder().baseUrl("http://localhost:8082/v1/creditcard").defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
@@ -58,6 +61,15 @@ public class BankAccountService {
     public Mono<BankAccount> findById(String id){
         log.debug("findById executed {}", id);
         return bankAccountRepository.findById(id);
+    }
+
+    public Mono<BankAccount> update(String accountId,  BankAccount bankAccount) {
+        log.debug("update executed {}:{}", accountId, bankAccount);
+        return bankAccountRepository.findById(accountId)
+                .flatMap(dbClient -> {
+                    bankAccountMapper.update(dbClient, bankAccount);
+                    return bankAccountRepository.save(dbClient);
+                });
     }
 
     public Mono<Object> create(BankAccount bankAccount){

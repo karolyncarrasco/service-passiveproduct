@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 @Data
 @Builder
@@ -16,23 +17,19 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class DebitCardModel {
     @Id
-    private String cardId;
+    private String id;
 
     @NotBlank(message="Número de tarjeta  cannot be null or empty")
     private String cardNumber;
 
-    @NotBlank(message="Fecha de apertura  cannot be null or empty")
     private LocalDate openingDate;
 
-    @NotBlank(message="Fecha de expiración  cannot be null or empty")
     private LocalDate expiryDate;
 
-    @NotBlank(message="Estado  cannot be null or empty")
-    private Boolean status;
-
-    @NotBlank(message="Cliente  cannot be null or empty")
     private String customerId;
 
+    private ArrayList<String> accounts;
+
     @NotBlank(message="Cuentas  cannot be null or empty")
-    private String accounts [];
+    private String mainAccount;
 }

@@ -8,7 +8,6 @@ import org.springframework.data.annotation.Id;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
@@ -23,14 +22,21 @@ public class AccountMovementModel {
     @NotBlank(message = "Debe indicar la cuenta")
     public String accountId;
 
-    public LocalDate movementDate;
+    private LocalDate movementDate;
+
+    @NotBlank(message = "Debe indicar la descripción del movimiento")
+    private String summary;
+
+    private String recipientAccount;
+
+    private String targetEntity;
 
     @Min(value = 1, message = "El monto debe ser mayor a 0")
-    public double amount;
+    private double amount;
 
     @NotBlank(message = "Debe indicar el tipo de movimiento D: Débito, A: Abono")
-    public String type;
+    private String type;
 
-    public double comission;
+    private double comission;
 
 }

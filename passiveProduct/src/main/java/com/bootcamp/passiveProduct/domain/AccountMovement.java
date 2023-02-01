@@ -27,9 +27,18 @@ public class AccountMovement {
     public double amount;
 
     @NotNull
+    public String summary;
+
+    public String recipientAccount;
+
+    public String targetEntity;
+
+    @NotNull
     public String type; //A: abono, D: Débito
 
     @NotNull
     public double comission;
+
+    public String debitCardId;
 
 }

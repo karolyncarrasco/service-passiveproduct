@@ -2,40 +2,31 @@ package com.bootcamp.passiveProduct.domain;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.ArrayList;
 
 @Data
 @Builder
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(value = "debitcard")
-public class DebitCard {
-
+@Document(value = "bankTransfer")
+public class BankTransfer {
     @Id
     private String id;
 
     @NotNull
-    @Indexed(unique = true)
-    private String cardNumber;
+    private String sourceAccount;
 
     @NotNull
-    private LocalDate openingDate;
+    private String targetAccount;
 
     @NotNull
-    private LocalDate expiryDate;
+    private LocalDate transferDate;
 
     @NotNull
-    private String customerId;
-
-    private ArrayList<String> accounts;
-
-    @NotNull
-    private String mainAccount;
+    private double amount;
 
 }

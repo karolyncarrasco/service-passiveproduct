@@ -61,4 +61,14 @@ public class BankAccountController {
                         .body(c)));
 
     }
+
+    @PutMapping("/{id}")
+    public Mono<ResponseEntity<BankAccountModel>> updateById(@PathVariable String id, @Valid @RequestBody BankAccountModel request) {
+        log.info("updateById executed {}:{}", id, request);
+        return bankAccountService.update(id, bankAccountMapper.modelToEntity(request))
+                .map(ba -> bankAccountMapper.entityToModel(ba))
+                .flatMap(c -> Mono.just(ResponseEntity.created(URI.create(String.format("http://%s:%s/%s/%s", name, port, "Client", c.getId())))
+                        .body(c)))
+                .defaultIfEmpty(ResponseEntity.badRequest().build());
+    }
 }
